@@ -1,0 +1,31 @@
+/*
+             给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+
+            '.' 匹配任意单个字符
+            '*' 匹配零个或多个前面的那一个元素
+             
+             */
+             
+        public bool IsMatch(string s, string p)
+        {
+            int sLen = s.Length, pLen = p.Length;
+            bool[,] memory = new bool[sLen + 1, pLen + 1];
+            memory[0, 0] = true;
+            for (int i = 0; i <= sLen; i++)
+            {
+                for (int j = 1; j <= pLen; j++)
+                {
+                    if (p[j - 1] == '*')
+                    {
+                        memory[i, j] = memory[i, j - 2] || (i > 0 && (s[i - 1] == p[j - 2] ||
+                                p[j - 2] == '.') && memory[i - 1, j]);
+                    }
+                    else
+                    {
+                        memory[i, j] = i > 0 && (s[i - 1] == p[j - 1] || p[j - 1] == '.')
+                                        && memory[i - 1, j - 1];
+                    }
+                }
+            }
+            return memory[sLen, pLen];
+        }
