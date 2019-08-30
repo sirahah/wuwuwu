@@ -12,7 +12,13 @@
 
 
 解法1 : 最巧方法   Manacher算法(马拉车)
+
 在原字符串的每一位都插入一个特殊字符"#",就构成了一定是奇数长度的字符串
+
+然后依次遍历
+p数组中记录的是 当前字符是否处在回文串中,并记录了回文串的单边长度
+利用回文串的特性,右半边的值可以去回文串对称的左边去找
+mx 的定义，它是遍历过的 i 的 i + p[i] 的回文串的最右端
 
 public static string LongestPalindrome(string s)
         {
@@ -64,3 +70,55 @@ public static string LongestPalindrome(string s)
             return longestPalindromeStr;
        }
 
+解法2 //动态规划的方法
+
+创建一个bool的二维数组    dp[l,r] 表示 -->  s.substring(l,R-L)  -->  存储一个bool值 表示是否为回文串
+
+已 "babad"为例子
+(L/R)  0        1       2       3       4
+0               F       T       F       F
+
+1                       F       T       F
+
+2                               F       F
+
+3                                       F
+
+4
+
+判断时需要满足一些条件
+1.  s[j] == s[i]
+2.  dp[j + 1, i - 1]==true    即 s[l+1] == s[r-1]
+3.  R - L <= 2
+
+最终的最长长度 为 R - L + 1  
+
+        public static string LongestPalindrome(string s)
+        {
+            if (s.Length == 0) return "";
+                        
+            int len = s.Length;
+            if (len <= 1) return s;
+            int max_len = 1;
+
+            string res = s.Substring(0, 1);
+            bool[,] dp = new bool[len, len];
+
+            for (int i = 1; i < len; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if (s[j] == s[i] && (i - j <= 2 || dp[j + 1, i - 1]))
+                    {
+                        dp[j, i] = true;
+                        // int cur_len = r - l + 1;
+                        if (i - j + 1 > max_len)
+                        {
+                            max_len = i - j + 1;
+                            res = s.Substring(j, max_len);
+                        }
+                    }
+                }
+            }
+            return res;
+        }
