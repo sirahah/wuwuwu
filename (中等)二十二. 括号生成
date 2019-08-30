@@ -1,0 +1,42 @@
+给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。
+
+例如，给出 n = 3，生成结果为：
+
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+        
+        
+        解法:
+        从第一步开始 都分别往后添加"("  和")"
+        
+        检查合法:
+        1. 只有左括号的个数大于右括号个数 才合法  (不合法的排除)
+        2. 最终左右括号的个数等于要求 才添加
+        
+        public List<string> GenerateParenthesis(int n)
+        {
+            List<string> res = new List<string>();
+            Generate(res, "", 0, 0, n);
+
+            return res;
+        }
+        //count1统计“(”的个数，count2统计“)”的个数
+        public void Generate(List<string> res, string ans, int count1, int count2, int n)
+        {
+
+            if (count1 > n || count2 > n) return;
+
+            if (count1 == n && count2 == n) res.Add(ans);//直到 ()各有3个才添加
+
+
+            if (count1 >= count2)//目前合法的情况下 往后面添加不同方向的括号 (添加完之后 如果不合法 就会在else中 不处理 )
+            {
+                Generate(res, ans + "(", count1 + 1, count2, n);
+                Generate(res, ans + ")", count1, count2 + 1, n);
+            }
+        }
