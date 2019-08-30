@@ -1,0 +1,22 @@
+//用双指针法   装水最多 取决于短的那根板子
+//两个指针一开始放在首尾,谁小谁就往中间移动
+
+
+
+
+        public int MaxArea(int[] height)
+        {
+            int l = 0;
+            int r = height.Length - 1;
+            int max = 0;
+            while (l < r)
+            {
+                int cur = Math.Min(height[l], height[r]) * (r - l);
+                max = Math.Max(max, cur);
+                if (height[l] > height[r])
+                    r--;
+                else
+                    l++;
+            }
+            return max;
+        }
