@@ -1,0 +1,46 @@
+public static IList<IList<int>> ThreeSum(int[] nums)
+        {
+            IList<IList<int>> res = new List<IList<int>>();
+            if (nums.Length == 0) return res;
+            int length = nums.Length;
+            Array.Sort(nums); // 先排个队，最左边是最弱（小）的，最右边是最强(大)的
+
+            if (nums[0] <= 0 && nums[length - 1] >= 0)
+            { // 优化1: 整个数组同符号，则无解
+                for (int i = 0; i < length - 2;)
+                {
+                    if (nums[i] > 0) break; // 优化2: 最左值为正数则一定无解
+                    int first = i + 1;
+                    int last = length - 1;
+                    do
+                    {
+                        //需要考虑int *int 越界的问题..
+                        long re = nums[i] * (long)nums[last];
+                        if (first >= last || re > 0) break; // 两人选相遇，或者三人同符号，则退出
+                        int result = nums[i] + nums[first] + nums[last];
+                        if (result == 0)
+                        { // 如果可以组队
+                            res.Add(new List<int>() { nums[i], nums[first], nums[last] });
+                        }
+                        
+                        if (result <= 0) // 小于0 把中间的指针往右移
+                        {
+                            while (first < last && nums[first] == nums[++first]) { } // 如果相等就跳过
+                        }
+                        else // 大于0 把右边的指针往左移
+                        {
+                            while (first < last && nums[last] == nums[--last]) { }
+                        }
+                    }
+                    while (first < last);
+
+                    while (i < length - 2 && nums[i] == nums[++i])
+                    {
+                    }
+
+                }
+            }
+
+            return res;
+
+        }
