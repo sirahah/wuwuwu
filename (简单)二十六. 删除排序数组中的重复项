@@ -1,0 +1,18 @@
+要求  不要使用额外的数组空间，必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。
+
+
+
+public int RemoveDuplicates(int[] nums)
+        {
+            if (nums.Length == 0) return 0;
+            Array.Sort(nums);
+            int index = 0;
+            for (int i = 1; i < nums.Length; i++)
+            {
+                if (nums[i - 1] != nums[i])
+                {
+                    index++;
+                }
+            }
+            return index + 1;
+        }
