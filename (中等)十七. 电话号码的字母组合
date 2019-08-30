@@ -1,0 +1,29 @@
+static List<string> temp = new List<string>() { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
+        static IList<string> res = new List<string>();
+        //十七. 电话号码的字母组合
+        public static IList<string> LetterCombinations(string digits)
+        {
+            if (digits.Length == 0) return res;
+            ConnectString(digits, 0, "");
+
+
+            return res;
+        }
+
+        public static void ConnectString(string digits, int index, string connectStr)
+        {
+            if (index == digits.Length)
+            {
+                res.Add(connectStr);
+                return;
+            }
+
+            string s = temp[System.Convert.ToInt32(digits[index].ToString())];
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                ConnectString(digits, index + 1, connectStr + s[i]);
+            }
+
+            return;
+        }
