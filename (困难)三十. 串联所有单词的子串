@@ -1,0 +1,133 @@
+        
+        解法1. 不完整思路:   取出所有第一个单词复合的字符串组合 --> 在拆分 排序 拼接 比较
+                        ////很多重复字符的时候 会超时
+        public static IList<int> FindSubstring(string s, string[] words)
+        {
+            IList<int> res = new List<int>();
+            if (string.IsNullOrEmpty(s) || words.Length == 0) return res;
+            int singleLen = words[0].Length;
+            int count = words.Length;
+            int len = singleLen * count;
+            if (s.Length < len) return res;
+
+            Array.Sort(words);
+
+            ////排序后字符串拼出的string
+            string symbolString = "";
+
+            List<string> wordsList = new List<string>();
+            for (int i = 0; i < count; i++)
+            {
+                symbolString += words[i];
+                wordsList.Add(words[i]);
+            }
+
+            Dictionary<int, string> allValuesDic = new Dictionary<int, string>();
+
+            //从s中找出所有符合第一个字母相同的字符串
+            for (int i = 0; i <= s.Length - len; i++)
+            {
+                if (wordsList.Contains(s.Substring(i, singleLen)))
+            /   {
+                    allValuesDic.Add(i,s.Substring(i, len));
+                }
+            }
+
+            ////从所有可能的字符串中筛选
+            ////按singlelen的长度 拆分 --> 排序 --> 拼接 --> 与symbolstring对比
+            foreach (var item in allValuesDic)
+            {
+                string compareString = "";
+                List<string> temp = new List<string>();
+                for (int j = 0; j < len; j += singleLen)
+                {
+                    temp.Add(item.Value.Substring(j, singleLen));
+               }
+
+               temp.Sort();
+                for (int j = 0; j < count; j++)
+                {
+                    compareString += temp[j];
+                }
+               if (compareString == symbolString)
+                {
+                    res.Add(item.Key);
+                }
+            }
+            return res;
+       }
+       
+       
+       
+       解法2. 遍历的优化 只需要遍历one_word次
+       
+         //这是关键所在!!!!!!!!!!!
+         //add一个word的时候 检查与标准map中的个数是否相同 如果不同 则代表加入的字符串错误
+         //则从头开始删除  直到个数符合为止
+                        
+                        
+       public static IList<int> FindSubstring(string s, string[] words)
+        {
+            IList<int> res = new List<int>();
+            if (s == null || s.Length == 0 || words == null || words.Length == 0) return res;
+            Dictionary<string, int> map = new Dictionary<string, int>();
+            int one_word = words[0].Length;
+            int word_num = words.Length;
+            int all_len = one_word * word_num;
+            foreach (var word in words)
+            {
+                if (!map.ContainsKey(word))
+                {
+                    map.Add(word, 1);
+                }
+                else
+                {
+                    map[word]++;
+                }
+            }
+
+            //i < one_word    !!!!!!!!!!!!
+            //因为会反复的去查找(间隔one_word的位置),所以只需要循环one_word遍
+            for (int i = 0; i < one_word; i++)
+            {
+                int left = i, right = i, count = 0;
+                Dictionary<string, int> tmp_map = new Dictionary<string, int>();
+                while (right + one_word <= s.Length)
+                {
+                    string w = s.Substring(right, one_word);
+                    right += one_word;
+                    if (!map.ContainsKey(w))
+                    {
+                        count = 0;
+                        left = right;
+                        tmp_map.Clear();
+                    }
+                    else
+                    {
+                        if (!tmp_map.ContainsKey(w))
+                        {
+                            tmp_map.Add(w, 1);
+                        }
+                        else
+                        {
+                            tmp_map[w]++;
+                        }
+                        count++;
+                        //这是关键所在!!!!!!!!!!!
+                        //add一个word的时候 检查与标准map中的个数是否相同 如果不同 则代表加入的字符串错误
+                        //则从头开始删除  直到个数符合为止
+                        while (tmp_map.GetValueOrDefault(w, 0) > map.GetValueOrDefault(w, 0))
+                        {
+                            string t_w = s.Substring(left, one_word);
+                            count--;
+                            tmp_map[t_w]--;
+
+                            left += one_word;
+                        }
+                        //有了上面的判断,所有count==word_num的时候 就代表符合要求
+                        if (count == word_num) res.Add(left);
+                    }
+                }
+            }
+            return res;
+     }
