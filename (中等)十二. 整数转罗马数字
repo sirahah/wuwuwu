@@ -1,0 +1,81 @@
+解法1.  一般解法(没想到数字的规律 写复杂了)
+
+public string IntToRoman(int num)
+{
+            Dictionary<int, string> dic = new Dictionary<int, string>();
+            dic.Add(1, "I");
+            dic.Add(5, "V");
+            dic.Add(10, "X");
+            dic.Add(50, "L");
+            dic.Add(100, "C");
+            dic.Add(500, "D");
+            dic.Add(1000, "M");
+            dic.Add(4, "IV");
+            dic.Add(9, "IX");
+            dic.Add(40, "XL");
+            dic.Add(90, "XC");
+            dic.Add(400, "CD");
+            dic.Add(900, "CM");
+
+            int count = 1, temp = 0;
+            List<int> ansList = new List<int>();
+
+            while (num > 0)
+            {
+                temp = num % 10;
+                if (temp < 4)
+                {
+                    for (int i = 1; i <= temp; i++)
+                    {
+                        ansList.Insert(0, 1 * count);
+                    }
+                }
+                else if (temp == 4 || temp == 9)
+                {
+                    ansList.Insert(0, temp * count);
+                }
+                else
+                {
+                    for (int i = 1; i <= temp - 5; i++)
+                    {
+                        ansList.Insert(0, 1 * count);
+                    }
+                    ansList.Insert(0, 5 * count);
+                }
+
+                num /= 10;
+                count *= 10;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < ansList.Count; i++)
+            {
+                sb.Append(dic[ansList[i]]);
+            }
+
+            return sb.ToString();
+}
+
+
+解法2.  贪心算法 由大到小找对应 在把num减去找到的值 
+public string IntToRoman(int num)
+        {
+            int[] nums = new int[] { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+            string[] romans = new string[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+
+            int index = 0;
+            string ans = "";
+            while (num > 0)
+            {
+                if (num >= nums[index])
+                {
+                    num -= nums[index];
+                    ans += romans[index];
+                }
+                else
+                {
+                    index++;
+                }
+            }
+
+            return ans;
+     }
