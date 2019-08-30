@@ -1,0 +1,31 @@
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+
+示例 1:
+
+输入: haystack = "hello", needle = "ll"
+输出: 2
+示例 2:
+
+输入: haystack = "aaaaa", needle = "bba"
+输出: -1
+
+
+public static int StrStr(string haystack, string needle)
+        {
+            if (string.IsNullOrEmpty(needle)) return 0;
+            if (haystack.Length < needle.Length) return -1;
+
+
+            for (int i = 0; i < haystack.Length; i++)
+            {
+                if (i + needle.Length > haystack.Length) break;
+
+                if (haystack[i] == needle[0])
+                {
+                    if (haystack.Substring(i, needle.Length) == needle) return i;
+                }
+            }
+
+            return -1;
+        }
+
