@@ -1,0 +1,69 @@
+将一个给定字符串根据给定的行数，以从上往下、从左到右进行 Z 字形排列。
+
+比如输入字符串为 "LEETCODEISHIRING" 行数为 3 时，排列如下：
+
+L   C   I   R
+E T O E S I I G
+E   D   H   N
+之后，你的输出需要从左往右逐行读取，产生出一个新的字符串，比如："LCIRETOESIIGEDHN"。
+
+请你实现这个将字符串进行指定行数变换的函数：
+
+string convert(string s, int numRows);
+
+示例 2:
+
+输入: s = "LEETCODEISHIRING", numRows = 4
+输出: "LDREOEIIECIHNTSG"
+解释:
+
+L     D     R
+E   O E   I I
+E C   I H   N
+T     S     G
+
+
+
+最巧解法     //遍历s 依次存储在不同的集合里 然后在从上到下 遍历集合读取数据
+            //isdown很关键!!!!!
+
+string s       abcdefghi
+数组1           a     d
+数组2           b     e
+数组3           c     d
+
+每存一个 就变化存入的数组
+
+
+row == 0 || row == numRows - 1    在数组1和数组3的时候需要改变方向
+
+public string Convert(string s, int numRows) {
+
+
+            if (numRows == 1) return s;            
+
+            List<List<char>> rows = new List<List<char>>();
+            for (int i = 0; i < s.Length && i < numRows; i++)
+            {
+                rows.Add(new List<char>());
+            }
+            bool isdown = false;
+            int row = 0;
+            foreach (var c in s)
+            {
+                rows[row].Add(c);
+                if (row == 0 || row == numRows - 1)
+                {
+                    isdown = !isdown;
+                }
+                row += isdown ? 1 : -1;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var l in rows)
+            {
+                sb.Append(new string(l.ToArray()));
+            }
+
+            return sb.ToString();
+    }
