@@ -1,0 +1,66 @@
+给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+
+示例 1：
+
+输入: "babad"
+输出: "bab"
+注意: "aba" 也是一个有效答案。
+示例 2：
+
+输入: "cbbd"
+输出: "bb"
+
+
+解法1 : 最巧方法   Manacher算法(马拉车)
+在原字符串的每一位都插入一个特殊字符"#",就构成了一定是奇数长度的字符串
+
+public static string LongestPalindrome(string s)
+        {
+            if (s.Length == 0) return "";
+
+            //最巧方法   Manacher算法(马拉车)
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0, len = s.Length; i < len; i++)
+            {
+                sb.Append("#");
+                sb.Append(s[i]);
+            }
+            sb.Append("#");
+
+            char[] charArr = sb.ToString().ToCharArray();
+            int slen = sb.ToString().Length;
+            int[] p = new int[slen];
+            int mx = 0;
+
+            int id = 0;//目前最大回文串的中心点的id
+            int longestPalindrome = 0;
+            string longestPalindromeStr = s.Substring(0, 1);
+            for (int i = 0; i < slen; i++)
+            {
+                // >的情况 是i处在一个回文串的里面
+                // <的话 就是重新开始匹配
+                p[i] = mx > i ? Math.Min(p[2 * id - i], mx - i) : 1;
+
+                // 老老实实去匹配，看新的字符
+                while (i - p[i] >= 0 && i + p[i] < slen && charArr[i - p[i]] == charArr[i + p[i]])
+                {
+                    p[i]++;
+                }
+                // 我们想象 mx 的定义，它是遍历过的 i 的 i + p[i] 的最大者 (回文串的最右端)
+                // 写到这里，我们发现，如果 mx 的值越大，
+                // 进入上面 i < mx 的判断的可能性就越大，这样就可以重复利用之前判断过的回文信息了
+                if (i + p[i] > mx)
+                {
+                    mx = i + p[i];
+                    id = i;
+                }
+
+                if (p[i] - 1 > longestPalindrome)
+                {
+                    longestPalindrome = p[i] - 1;
+                    longestPalindromeStr = sb.ToString().Substring(i - longestPalindrome, longestPalindrome * 2 + 1).Replace("#", "");
+                }
+            }
+            return longestPalindromeStr;
+       }
+
