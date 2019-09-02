@@ -1,0 +1,67 @@
+解法: 用递归的方法 一个个数字去尝试
+填数字前 需要判断是否符合数独的规则(每行每列每个小九宫格有且只出现过一次)
+
+public void SolveSudoku(char[][] board)
+        {
+            //3个bool数组 表示每行中这个数字是否使用过/每列/每个小九宫格
+            bool[,] rowUesd = new bool[9, 10];
+            bool[,] colUesd = new bool[9, 10];
+            bool[,,] boxUesd = new bool[3, 3, 10];
+
+            for (int i = 0; i < 9; i++)//行
+            {
+                for (int j = 0; j < 9; j++)//列
+                {
+                    int num = board[i][j] - '0';
+                    if (num >= 1 && num <= 9)
+                    {
+                        rowUesd[i, num] = true;
+                        colUesd[j, num] = true;
+                        boxUesd[i / 3, j / 3, num] = true;
+                    }
+                }
+            }
+            //用递归的方法 
+            RecursionFunc(board, rowUesd, colUesd, boxUesd, 0, 0);
+        }
+
+        private bool RecursionFunc(char[][] board, bool[,] rowUesd, bool[,] colUesd, bool[,,] boxUesd, int row, int col)
+        {
+            if (col == 9)
+            {
+                row++;
+                col = 0;
+                if (row == 9) return true;
+            }
+
+            if (board[row][col] == '.')//该位置没有数字
+            {
+                for (int num = 1; num <= 9; num++)
+                {
+                    bool needWrite = !(rowUesd[row, num] || colUesd[col, num] || boxUesd[row / 3, col / 3, num]);
+                    if (needWrite)
+                    {
+                        rowUesd[row, num] = true;
+                        colUesd[col, num] = true;
+                        boxUesd[row, col, num] = true;
+                        board[row][col] = (char)(num + '0');
+                        if (RecursionFunc(board, rowUesd, colUesd, boxUesd, row, col + 1))
+                        {
+                            return true;
+                        }
+                        else //无解的情况 ,需要还原数据
+                        {
+                            board[row][col] = '.';
+                            rowUesd[row, num] = false;
+                            colUesd[col, num] = false;
+                            boxUesd[row / 3, col / 3, num] = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return RecursionFunc(board, rowUesd, colUesd, boxUesd, row, col + 1);
+            }
+            return false;
+        }
