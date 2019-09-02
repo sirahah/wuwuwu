@@ -40,40 +40,32 @@ candidates 中的数字可以无限制重复被选取。
 
 
 
-static IList<IList<int>> CombinationSum_res = new List<IList<int>>();
-        //(中等)三十九. 组合总和
-        public static IList<IList<int>> CombinationSum(int[] candidates, int target)
+IList<IList<int>> CombinationSum_res = new List<IList<int>>();
+        
+        public  IList<IList<int>> CombinationSum(int[] candidates, int target)
         {
             Array.Sort(candidates);
-            for (int i = 0; i < candidates.Length && candidates[i] <= target; i++)
-            {
-                List<int> tempList = new List<int>();
-                Recursion_CombinationSum(candidates, target, candidates[i], tempList, i);
-            }
+            List<int> tempList = new List<int>();
+            Recursion_CombinationSum(candidates, target, tempList, 0);
+
 
             return CombinationSum_res;
         }
 
-        private static void Recursion_CombinationSum(int[] candidates, int target, int num, List<int> tempList, int index)
+        private void Recursion_CombinationSum(int[] candidates, int target, List<int> tempList, int index)
         {
-            int sum = 0;
-            List<int> newList = new List<int>();
-            for (int i = 0; i < tempList.Count; i++)
-            {
-                newList.Add(tempList[i]);
-                sum += tempList[i];
-            }
-            if (sum < target)
-            {
-                newList.Add(num);
-                for (int i = index; i < candidates.Length && candidates[i] <= target - sum; i++)
+            if (0 < target)
+            {              
+                for (int i = index; i < candidates.Length && candidates[i] <= target; i++)
                 {
-                    Recursion_CombinationSum(candidates, target, candidates[i], newList, i);
+                    List<int> newList = new List<int>(tempList);
+                    newList.Add(candidates[i]);
+                    Recursion_CombinationSum(candidates, target-candidates[i], newList, i);
                 }
             }
-            else if (sum == target)
+            else if (0 == target)
             {
                 CombinationSum_res.Add(tempList);
             }
-
         }
+
