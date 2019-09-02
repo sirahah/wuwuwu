@@ -1,0 +1,72 @@
+判断一个 9x9 的数独是否有效。只需要根据以下规则，验证已经填入的数字是否有效即可。
+
+数字 1-9 在每一行只能出现一次。
+数字 1-9 在每一列只能出现一次。
+数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+
+
+上图是一个部分填充的有效的数独。
+
+数独部分空格内已填入了数字，空白格用 '.' 表示。
+
+示例 1:
+
+输入:
+[
+  ["5","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+输出: true
+
+
+解法:
+//9个小九宫格组成的数组,只填写了一些数字
+            //注意: 只需要判断已填写的数字是否合理 不用考虑这个九宫格是否有解
+
+            //解法: 判断 行,列,box是否存在同样的数字
+            //box很关键  大的九宫格是有9个小九宫格组成
+            //box的index计算   (row / 3) * 3 + columns / 3
+            
+public bool IsValidSudoku(char[][] board)
+        {
+            if (board.Length == 0 || board == null) return false;
+
+            Dictionary<char, int>[] row = new Dictionary<char, int>[9];
+            Dictionary<char, int>[] col = new Dictionary<char, int>[9];
+            Dictionary<char, int>[] box = new Dictionary<char, int>[9];
+
+            for (int i = 0; i < 9; i++)
+            {
+                row[i] = new Dictionary<char, int>();
+                col[i] = new Dictionary<char, int>();
+                box[i] = new Dictionary<char, int>();
+            }
+
+            for (int i = 0; i < 9; i++) //行
+            {
+                for (int j = 0; j < 9; j++)//列
+                {
+                    if (board[i][j] == '.') continue;
+                    int box_index = (i / 3) * 3 + j / 3;//box的Index
+
+                    if (!row[i].ContainsKey(board[i][j]) && !col[j].ContainsKey(board[i][j]) && !box[box_index].ContainsKey(board[i][j]))
+                    {
+                        row[i].Add(board[i][j], 1);
+                        col[j].Add(board[i][j], 1);
+                        box[box_index].Add(board[i][j], 1);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
