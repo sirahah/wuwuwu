@@ -1,0 +1,79 @@
+给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的数字可以无限制重复被选取。
+
+说明：
+
+所有数字（包括 target）都是正整数。
+解集不能包含重复的组合。 
+示例 1:
+
+输入: candidates = [2,3,6,7], target = 7,
+所求解集为:
+[
+  [7],
+  [2,2,3]
+]
+示例 2:
+
+输入: candidates = [2,3,5], target = 8,
+所求解集为:
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+
+
+
+解法: 递归
+注意:为了避免重复解,Recursion_CombinationSum最后一个index参数
+类似二叉树的右枝不需要在去重复加比他小的那一项
+
+例子  [2,3,6]  7
+
+                 2                    3                      6
+             2       3               -     3
+            2  3    -  3
+
+
+
+
+
+static IList<IList<int>> CombinationSum_res = new List<IList<int>>();
+        //(中等)三十九. 组合总和
+        public static IList<IList<int>> CombinationSum(int[] candidates, int target)
+        {
+            Array.Sort(candidates);
+            for (int i = 0; i < candidates.Length && candidates[i] <= target; i++)
+            {
+                List<int> tempList = new List<int>();
+                Recursion_CombinationSum(candidates, target, candidates[i], tempList, i);
+            }
+
+            return CombinationSum_res;
+        }
+
+        private static void Recursion_CombinationSum(int[] candidates, int target, int num, List<int> tempList, int index)
+        {
+            int sum = 0;
+            List<int> newList = new List<int>();
+            for (int i = 0; i < tempList.Count; i++)
+            {
+                newList.Add(tempList[i]);
+                sum += tempList[i];
+            }
+            if (sum < target)
+            {
+                newList.Add(num);
+                for (int i = index; i < candidates.Length && candidates[i] <= target - sum; i++)
+                {
+                    Recursion_CombinationSum(candidates, target, candidates[i], newList, i);
+                }
+            }
+            else if (sum == target)
+            {
+                CombinationSum_res.Add(tempList);
+            }
+
+        }
